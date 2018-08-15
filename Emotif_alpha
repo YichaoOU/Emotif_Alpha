@@ -1,0 +1,242 @@
+#!/usr/bin/env python 
+# Copyright (c) 2015 
+#
+# This module is free software. You can redistribute it and/or modify it under 
+# the terms of the MIT License.
+
+'''
+This code is intend to:
+ - run motif discovery using Decod, DME, Gimme
+ - run motif scanning using FIMO
+ - run motif selection using Rami's GA, greedy , ... , (on-going work)
+ - run motif output : rami's latex table and mast motif visualization
+ - run motif evaluation : SE,SP,ACC,AUC,ROC,PPV,FP,etc.
+ - run motif clustering (future work)
+ - run motif matching to known motifs (future work) 
+ 
+ output folder structure
+ 
+ jid_named folder
+ - jid + '_gimme_motifs' folder
+ - jid + '_DECOD_motifs' folder
+ - jid + '_DME_motifs' folder
+ - jid + "_all_motifs.pwm" file
+ - pos.mhit file
+ - neg.mhit file
+ - conf file
+ - jid + '_motif_scanning' folder (future work)
+  - mapping.csv
+  - others
+ - jid + '_motif_selection_algo_name' folder
+  - summary.csv
+  - selected motifs pwm file
+
+'''
+
+
+import sys
+import os 
+import argparse
+import shutil
+
+from Emotif.utils import conf
+from Emotif.motif_discovery import *
+from Emotif.motif_scanning import *
+from Emotif.motif_selection import *
+from Emotif.motif_output import *
+from Emotif.motif_filtering import *
+from Emotif.motif_evaluation import *
+from Emotif.promoter_clustering import *
+
+
+#-------------------- parse arguments ----------------------#
+parser = argparse.ArgumentParser(prog='Emotif_alpha')
+#job id to make a folder to store all the data for a specific job
+parser.add_argument("-jid",  help="enter job ID")
+#path to configuration file
+parser.add_argument("-confFile",  help="enter the configuration file")
+parser.add_argument("-copy",  help="copy a sample configuration file into your current folder.")
+args = parser.parse_args()
+# print 'jobId:', args.jid,'configfile:', args.confFile,'copy:', args.copy
+copy_flag = False
+try:
+	command = "cp /usr/local/lib/python2.7/dist-packages/Emotif/_templates/sample_comf.md "
+	command = command + "./" + args.copy
+	# print command
+	os.system(command)
+	copy_flag = True
+except:
+	1
+if copy_flag:
+		exit()	
+try:
+	output_PWM_file = args.jid + "_all_motifs.pwm"
+except:
+	parser.print_help()
+	# print '''
+	# Usage: Emotif -jid jobID -confFile sample_conf.md
+	
+	# (1) Run motif discovery, scanning, selection, and visualization:
+	# Emotif -jid jobID -confFile sample_conf.md
+	
+	# (2) Copy a sample configuration file into your current folder.
+	# Emotif -copy [you_defined_name.md]
+	# '''
+	exit()
+
+	
+#------------------- prepare working directory -------------------#	
+
+#make a results directory to store job results
+resultsDirName = args.jid
+os.makedirs(resultsDirName)
+
+#make a file list to store all the files to be moved to the results folder
+fileList = []
+
+#copy the config file
+cp_command = "cp "+args.confFile+" ./"+resultsDirName+"/"+args.jid+".conf"
+os.system(cp_command)
+
+
+#make a config object
+confObj = conf.Conf()
+# 2d dict, first key: section name. 
+confDict = confObj.read(args.confFile) 
+
+
+### motif discovery ###
+confDict['input']['all_pwm_file'] = confDict['input']['pwm_file']
+if confDict['job_type']['motif_discovery'] == 'true':
+	if confDict['motif_discovery']['convolution'] == 'true':
+		pwm_file,MD_convo_dir = convolution(args.jid,confDict)
+		fileList.append(MD_convo_dir)
+		fileList.append(pwm_file)
+	else:
+		pwm_file,MD_dir = start_motif_discovery(args.jid,confDict)
+		fileList.append(MD_dir)
+		fileList.append(pwm_file)
+	if confDict['motif_discovery']['pooling'] == 'true':
+		pwm_file,MD_pool_dir = pooling(args.jid,confDict)
+		fileList.append(MD_pool_dir)
+		fileList.append(pwm_file)
+	confDict['input']['all_pwm_file'] = pwm_file
+
+### motif scanning ### 
+
+if confDict['job_type']['motif_scanning'] == 'true':
+
+	# folder movement is coded in run_fimo()
+	run_fimo(args.jid,confDict,fileList)
+	confDict['input']['pos_mhit'] = args.jid + '_pos.mhit'
+	confDict['input']['neg_mhit'] = args.jid + '_neg.mhit'
+	confDict['input']['original_pos_mhit'] = args.jid + '_pos.mhit'
+	confDict['input']['original_neg_mhit'] = args.jid + '_neg.mhit'
+	
+
+	
+### promoter clustering ###
+if confDict['job_type']['sequence_clustering'] == 'true':
+
+	file,poshit,neghit = prefilter(args.jid,confDict)
+	fileList.append(file)
+	confDict['input']['pos_mhit'] = file + "/" + poshit
+	confDict['input']['neg_mhit'] = file + "/" + neghit
+	
+	clustering_folders = []
+	cluster_dir = args.jid+"_clusters"
+	os.makedirs(cluster_dir)
+	
+	label = "sequences"
+	
+	csv_file = mhit2csv_with_label(args.jid,confDict,label)
+	clustering_folders.append(csv_file)
+	
+	result_file_list = jacards_HC(args.jid,confDict,csv_file)
+	num_cluster = int((len(result_file_list)-2)/4)
+	
+	fileList.append(result_file_list[0])
+	clustering_folders.append(result_file_list[1])
+	
+	# for each cluster
+	for i in range(num_cluster):
+		cluster_folders_k = []
+		cluster_dir_k = args.jid+"_cluster_"+str(i)
+		os.makedirs(cluster_dir_k)
+		clustering_folders.append(cluster_dir_k)
+		
+		
+		pos_hit_k = args.jid + "_cluster_"+str(i)+"_pos.mhit"
+		pos_seq_k = args.jid + "_cluster_"+str(i)+"_pos.fa"
+		neg_hit_k = args.jid + "_cluster_"+str(i)+"_neg.mhit"
+		neg_seq_k = args.jid + "_cluster_"+str(i)+"_neg.fa"
+		confDict['input']['pos_mhit'] = pos_hit_k	
+		confDict['input']['neg_mhit'] = neg_hit_k	
+		confDict['input']['pos_seq'] = pos_seq_k	
+		confDict['input']['neg_seq'] = neg_seq_k
+		
+		
+		cluster_folders_k.append(pos_hit_k)	
+		cluster_folders_k.append(neg_hit_k)	
+		cluster_folders_k.append(pos_seq_k)	
+		cluster_folders_k.append(neg_seq_k)
+		### motif selection ###
+		list_file = run_motif_selection(args.jid + "_cluster_"+str(i), confDict)
+		cluster_folders_k += list_file
+		
+			
+		list_file = run_motif_output(args.jid + "_cluster_"+str(i),confDict)
+		fileList += list_file
+		fileList.append(cluster_dir_k)
+		confDict['input']['pwm_file'] = confDict['input']['all_pwm_file']
+		for outFile in cluster_folders_k:	
+			print outFile
+			shutil.move(outFile, cluster_dir_k)
+		
+else:	
+	### motif selection ###
+	list_file = run_motif_selection(args.jid, confDict)
+	fileList += list_file
+	list_file = run_motif_output(args.jid,confDict)
+	fileList += list_file
+
+
+	
+
+### motif output ###
+
+
+	
+if confDict['job_type']['motif_testing'] == 'true':
+
+	MT_folder = []
+	MT_dir = args.jid+"_Motif_Testing"
+	os.makedirs(MT_dir)
+	
+	if confDict['motif_selection']['greedy_multicover'] == 'true':
+		file = run_testing_SE_SP_ACC(args.jid,confDict)
+		MT_folder.append(file)
+	if confDict['motif_selection']['genetic_algo_multi'] == 'true':
+		solPWM_path = MOUT_dir + "/" + args.jid + '_genetic_algo_multiCover_rami_style_motif_output/'
+		for s in range(int(confDict['input']['num_sols'])):
+			num_sol = str(s+1)
+			solPWM_file = solPWM_path+args.jid+'_genetic_algo_multiCover_sol_'+num_sol+'_select_motifs.pwm'
+			confDict['input']['pwm_selected'] = solPWM_file
+			label = "sol_"+num_sol
+			file = run_testing_SE_SP_ACC_genetic(args.jid,confDict,label)
+			MT_folder.append(file)
+	for outFile in MT_folder:	
+		print outFile
+		shutil.move(outFile, MT_dir)
+	# file = single_motif_rank(args.jid,confDict,"test_rank")
+	fileList.append(MT_dir)
+			
+# print 	fileList
+for outFile in fileList:
+	print outFile
+	shutil.move(outFile, args.jid)
+
+delete_tex_related_files = "rm -rf " + args.jid + "*.aux"
+os.system(delete_tex_related_files)
+delete_tex_related_files = "rm -rf " + args.jid + "*.log"
+os.system(delete_tex_related_files)

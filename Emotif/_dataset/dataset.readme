@@ -1,0 +1,4 @@
+This test dataset is stress-responsive gene dataset.
+
+Pos.fa is the 40 stress-responsive genes.
+Neg.fa is the 145 HRGP genes.

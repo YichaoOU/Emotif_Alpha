@@ -1,0 +1,24 @@
+#This code uses the MOEA framework which has several implementations of evolutionary algorithms.
+http://moeaframework.org/
+
+#How to compile
+javac -cp ".:/home/rami/Documents/moea/MOEAFramework-2.4/lib/*" Motif_select_example.java 
+
+#How to run (this is using an example in the data folder):
+#Note that you need to provide your path to the MOEA framework
+java -cp ".:/home/rami/Documents/moea/MOEAFramework-2.4/lib/*" Motif_select_example test ../data/stress_moea.conf
+
+
+#Notes
+
+The number of contraints and number of objectives is hard coded as well in 'Motif_select-example.java' file:
+inData.setNumObjectives(3);
+inData.setNumConstraints(4);
+
+For PNPSMC the depth and min_pos_cov are hard coded:
+The max_depth option is hard coded for now in the 'Motif_select.java' file:
+//the max depth, for now it is hard coded 
+int maxDepth = 3; 
+
+The min positive coverage for every motif is hard coded in the 'Motif_select.java' file:
+double minMotifPosCov = 0.5; //Constriant for min pos coverage per single motif in percentage 
