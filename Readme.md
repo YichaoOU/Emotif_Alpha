@@ -63,4 +63,4 @@ Please put the dme2 in your $PATH.
 
 ## High-level Workflow
 
-![pipeline](./Doc/pipeline.png)
+![pipeline](./Doc/pipeline1.png)
