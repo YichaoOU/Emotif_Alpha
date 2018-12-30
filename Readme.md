@@ -1,4 +1,4 @@
-# Emotif_Alpha: A multi-omic DNA motif discovery and selection pipeline
+# Emotif Alpha: A multi-omic DNA motif discovery and selection pipeline
 
 ## Usage:
 
