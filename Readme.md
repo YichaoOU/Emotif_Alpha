@@ -1,5 +1,57 @@
 # Emotif Alpha: A multi-omic DNA motif discovery and selection pipeline
 
+
+
+
+
+
+
+
+## Installation
+
+0. Anaconda python 3.6
+
+1. GimmeMotifs
+GimmeMotifs is a collection of motif discovery tools. The most straightforward way to install GimmeMotifs (https://github.com/simonvh/gimmemotifs ) is:
+
+`conda install -c bioconda gimmemotifs`
+
+
+Weeder (a motif discovery tool) is not included in GimmeMotifs by default.
+
+2. DME
+
+`git clone https://github.com/smithlabcode/dme`
+
+`cd dme`
+
+`https://github.com/smithlabcode/smithlab_cpp.git`
+
+`module load gcc/6.3.0` (specifically for stjude HPC)
+
+`make`
+
+`./dme2` (you should be able to see the help message)
+
+
+3. DECOD
+
+`wget http://www.sb.cs.cmu.edu/DECOD/download/DECOD-V1.01-20111024.zip`
+
+`unzip DECOD-V1.01-20111024.zip`
+
+`module load java`
+
+`java -jar DECOD-20111024.jar -nogui`
+
+add to bashrc
+
+alias decod='java -jar /home/yli11/Programs/jar_tools/DECOD-20111024.jar -nogui'
+
+
+
+
+
 ## Usage:
 
 1. TO INSTALL Emotif
