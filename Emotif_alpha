@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 # Copyright (c) 2015 
 #
 # This module is free software. You can redistribute it and/or modify it under 
@@ -38,7 +38,9 @@ import sys
 import os 
 import argparse
 import shutil
-
+import Emotif
+import datetime
+import getpass
 from Emotif.utils import conf
 from Emotif.motif_discovery import *
 from Emotif.motif_scanning import *
@@ -50,41 +52,28 @@ from Emotif.promoter_clustering import *
 
 
 #-------------------- parse arguments ----------------------#
+username = getpass.getuser()
 parser = argparse.ArgumentParser(prog='Emotif_alpha')
-#job id to make a folder to store all the data for a specific job
-parser.add_argument("-jid",  help="enter job ID")
-#path to configuration file
-parser.add_argument("-confFile",  help="enter the configuration file")
-parser.add_argument("-copy",  help="copy a sample configuration file into your current folder.")
+
+parser.add_argument('-j',"--jid",  help="enter job ID",default=username+"_Emotif_alpha_"+str(datetime.date.today()))
+group = parser.add_mutually_exclusive_group(required=True)	
+group.add_argument('-f',"--confFile",  help="enter the configuration file")
+group.add_argument("-copy",  help="copy a sample configuration file into your current folder.", action='store_true')
 args = parser.parse_args()
 # print 'jobId:', args.jid,'configfile:', args.confFile,'copy:', args.copy
-copy_flag = False
-try:
-	command = "cp /usr/local/lib/python2.7/dist-packages/Emotif/_templates/sample_comf.md "
-	command = command + "./" + args.copy
-	# print command
-	os.system(command)
-	copy_flag = True
-except:
-	1
-if copy_flag:
-		exit()	
-try:
-	output_PWM_file = args.jid + "_all_motifs.pwm"
-except:
-	parser.print_help()
-	# print '''
-	# Usage: Emotif -jid jobID -confFile sample_conf.md
-	
-	# (1) Run motif discovery, scanning, selection, and visualization:
-	# Emotif -jid jobID -confFile sample_conf.md
-	
-	# (2) Copy a sample configuration file into your current folder.
-	# Emotif -copy [you_defined_name.md]
-	# '''
+
+if args.copy:
+	lib_dir = Emotif.__file__.replace("__init__.pyc","")
+	template = lib_dir + "_templates/sample_conf.md"
+	lines = open(template).readlines()
+	lines[7] = lines[7].replace("Input_pos_fasta",lib_dir+"_dataset/pos.fa")
+	lines[8] = lines[8].replace("Input_neg_fasta",lib_dir+"_dataset/neg.fa")
+	f = open("sample.md","wb")
+	print >>f,"".join(lines)
+	# os.system(command%(template))
 	exit()
 
-	
+
 #------------------- prepare working directory -------------------#	
 
 #make a results directory to store job results

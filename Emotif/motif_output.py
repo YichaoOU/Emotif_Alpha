@@ -21,7 +21,8 @@ from utils.general_utils import makeMotifDictFromPwmFile as readPWM
 from motif_evaluation import run_roc_auc_fimo
 from motif_filtering import hit2hit
 PATH = os.path.dirname(os.path.abspath(__file__))
-
+# print "########################"
+# print PATH
 
 def run_motif_output(jid,confDict):
 	fileList = []
@@ -144,7 +145,8 @@ def run_Rami_style(jid,confDict,label):
 		file = mhit2csv(jid,confDict,'sol_' + str(solNum)+"_final_selection_")
 		PCA_plots_files.append(file)
 		output_file = jid + '_sol_' + str(solNum) +"_"+"final_selection"+"_PCAplot.png"
-		R = "Rscript /usr/local/lib/python2.7/dist-packages/emoti/pca_plot.py "+ file +" "+ output_file
+		# print __file__
+		R = "Rscript %s/pca_plot.R "%(PATH)+ file +" "+ output_file
 		os.system(R)
 		PCA_plots_files.append(output_file)
 		confDict['input']['pos_mhit'] = pos_mhit
@@ -273,11 +275,11 @@ def Motif_discovery_accuracy_AUC(jid,confDict,label,csv_file):
 	fileList.append(csv_file)
 	# images file
 	motif_logo_folder = "motif_discovery_logos"
-	meme_command = "/home/liyc/working/bin/meme2images -png " + allPwmFile + " " + motif_logo_folder
+	meme_command = "meme2images -png " + allPwmFile + " " + motif_logo_folder
 	os.system(meme_command)
 	fileList.append(motif_logo_folder)
 	# output motif report html file
-	template = "/usr/local/lib/python2.7/dist-packages/Emotif/_templates/template.html"
+	template = "%s/_templates/template.html"%(PATH)
 	template_html = open(template).readlines()
 	motif_logo_dict = copy_motif_logo(motif_logo_folder)
 	rows = output_table(csv_file,motif_logo_dict)
@@ -968,7 +970,7 @@ def run_Rami_style_multicover(jid,confDict,label):
 		file = mhit2csv(jid,confDict,"_final_selection_")
 		PCA_plots_files.append(file)
 		output_file = jid +"_"+"final_selection"+"_PCAplot.png"
-		R = "Rscript /usr/local/lib/python2.7/dist-packages/emoti/pca_plot.py "+ file +" "+ output_file
+		R = "Rscript %s/pca_plot.R "%(PATH)+ file +" "+ output_file
 		os.system(R)
 		PCA_plots_files.append(output_file)
 		

@@ -30,6 +30,7 @@ from multiprocessing import Pool, cpu_count
 # ./convert-matrix -from meme -to transfac -i /home/working/program/Emotif3/test/test_all_motifs.pwm -o test.pssm -v
 # ./convert-matrix -from transfac -to cb -i test_clustering3_cluster_root_motifs.tf -pseudo 1 -multiply 1  -decimals 1 -perm 0 -bg_pseudo 0.01 -return counts -to cb -o test3.cb
 # ./matrix-clustering -v 1 -max_matrices 900 -quick -matrix_format transfac -i test.pssm -hclust_method average -title 'sdf' -motif_collection_name 'asf' -metric_build_tree 'Ncor' -lth w 5 -lth cor 0.8 -lth Ncor 0.8 -label_in_tree name -return root_matrices  -o test_clustering3
+PATH = os.path.dirname(os.path.abspath(__file__))
 def convolution(jid,confDict):
 	convo_PWM_file = jid + "_convo_motifs.pwm"
 	
@@ -376,7 +377,7 @@ def run_gimme(jid, confDict):
 	
 	'''
 	
-
+	## latest gimme, no -b user option
 	gimme_command = 'gimme motifs '	+ pos_seq + \
 		' -k -a '+ m_size + ' -n ' + output_folder + \
 		' -b user -u ' + neg_seq + \
@@ -428,7 +429,7 @@ def run_DECOD(jid, confDict):
 	'''
 	# java -jar /home/working/program/decod/DECOD-20111024.jar -nogui 
 	fileList = []
-	decod = 'java -Xmx2G -jar /home/working/program/decod/DECOD-20111024.jar -nogui '
+	decod = 'java -jar %s/DECOD-20111024.jar -nogui '%(PATH)
 	pwmFileName = output_folder + '/' + jid + '_decod_motifs.pwm'
 	# fileList.append(pwmFileName)
 	pwmFile = open(pwmFileName, 'wb')
@@ -509,9 +510,9 @@ def run_DME(jid, confDict):
 	fileList = []
 	#init a list to store name of dme output files
 	dmeOutFileList = []
-	dme_command1 = '/home/working/program/dme2_beta_2008_08_30/dme2 -b ' + neg_seq + ' -n ' + motif_number
-	if strand == 'single':
-		dme_command1 = dme_command1.replace('dme2','dme2_both')
+	dme_command1 = 'dme2 -b ' + neg_seq + ' -n ' + motif_number
+	# if strand == 'single':
+		# dme_command1 = dme_command1.replace('dme2','dme2_both')
 	dme_command_list = []
 	for l in motif_size:
 		dme_command = dme_command1
@@ -846,7 +847,8 @@ def parseDME(outFile):
 					#initialize the MyMotif object
 					motifDict[motifId] = motif_utils.MyMotif()
 					#make and store the BioPython motif object
-					motifDict[motifId].bioMotifObj = motifs.create(siteList)
+					# print [x.upper() for x in siteList]
+					motifDict[motifId].bioMotifObj = motifs.create([x.upper() for x in siteList])
 					motifDict[motifId].regExp = motifId
 					motifDict[motifId].score = motifScore
 					motifDict[motifId].foreSeqList = list(motifSeqList)#make a copy of the list
@@ -900,7 +902,8 @@ def parseDME(outFile):
 		motifRank += 1
 		motifDict[motifId] = motif_utils.MyMotif()
 		#make and store the BioPython motif object
-		motifDict[motifId].bioMotifObj = motifs.create(siteList)
+		# print (siteList)
+		motifDict[motifId].bioMotifObj = motifs.create([x.upper() for x in siteList])
 		motifDict[motifId].regExp = motifId
 		motifDict[motifId].score = motifScore
 		motifDict[motifId].foreSeqList = list(motifSeqList)#make a copy of the list

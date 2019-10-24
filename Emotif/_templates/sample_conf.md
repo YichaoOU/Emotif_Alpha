@@ -5,8 +5,8 @@
 ; # the foreground and background files for motif discovery
 
 ; Positive genes and negative genes are required all the time.
-pos_seq=/usr/local/lib/python2.7/dist-packages/Emotif/_dataset/pos.fa
-neg_seq=/usr/local/lib/python2.7/dist-packages/Emotif/_dataset/neg.fa
+pos_seq=Input_pos_fasta
+neg_seq=Input_neg_fasta
 
 ; Motif discovery on both strand or single strand
 strand= both

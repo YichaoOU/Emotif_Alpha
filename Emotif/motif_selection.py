@@ -12,7 +12,7 @@ from utils import *
 from utils import Tomtom
 from motif_filtering import *
 from motif_output import *
-
+PATH = os.path.dirname(os.path.abspath(__file__))
 
 def run_motif_selection(jid, confDict):
 	fileList = []
@@ -35,14 +35,14 @@ def run_motif_selection(jid, confDict):
 				
 		# output PCA plot		
 		output_file = jid +"_"+label+"_PCAplot.png"		
-		R = "Rscript /usr/local/lib/python2.7/dist-packages/Emotif/pca_plot.py "+ file +" "+ output_file		
+		R = "Rscript %s/pca_plot.R "%(PATH)+ file +" "+ output_file		
 		os.system(R)		
 		all_motifs_file_list.append(output_file)		
 				
 				
 				
 		arff_file = jid +"_"+label+".arff"		
-		python_script = "python /usr/local/lib/python2.7/dist-packages/Emotif/csv2arff.py " + file + " " + arff_file		
+		python_script = "python %s/csv2arff.py "%(PATH) + file + " " + arff_file		
 		os.system(python_script)		
 		fileList.append(arff_file)		
 		for outFile in all_motifs_file_list:		
@@ -112,7 +112,7 @@ def run_motif_selection(jid, confDict):
 				
 		# output final motifs PCA plot		
 		output_file = jid +"_"+label+"_PCAplot.png"		
-		R = "Rscript /usr/local/lib/python2.7/dist-packages/Emotif/pca_plot.py "+ file +" "+ output_file		
+		R = "Rscript %s/pca_plot.R "%(PATH)+ file +" "+ output_file		
 		os.system(R)		
 		final_motifs_file_list.append(output_file)		
 		
@@ -737,7 +737,6 @@ def outputResults(outFileName, depthDict, backFimoDict, filterMinNumSeq, idMotif
 			depthOut.write(line + '\n')
 	depthOut.close()
 	return finalSelectMotifList
-	
 	
 	
 	

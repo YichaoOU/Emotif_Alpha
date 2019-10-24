@@ -1,40 +1,15 @@
-#!/usr/bin/env python 
-# Copyright (c) 2015 
-#
-# This module is free software. You can redistribute it and/or modify it under 
-# the terms of the MIT License.
-import shutil
-import sys
-import os
+from setuptools import setup, find_packages
 
-try:
-	if sys.argv[1] == "install":
-		command1 = "cp -rf Emotif_alpha.py /usr/local/bin/Emotif_alpha"
-		command2 = "cp -rf Emotif /usr/local/lib/python2.7/dist-packages/"
-		os.system(command1)
-		os.system(command2)
-except:
-	print '''
-	Usage: sudo python setup.py install
-	
-	'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+setup(
+    name='Emotif_alpha',
+    version='1.0',
+    author='Yichao Li',
+    author_email='yl079811@ohio.edu',
+    packages=['Emotif'],
+	scripts=['Emotif_alpha'],
+    url='https://github.com/YichaoOU/Emotif_Alpha',
+    license='LICENSE',
+	package_data={'': ["*","algo/*","_dataset/*","_templates/*","utils/*"]},
+	include_package_data=True,
+    description='Ensemble motif discovery',
+)

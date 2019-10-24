@@ -1,25 +1,17 @@
 # Emotif Alpha: A multi-omic DNA motif discovery and selection pipeline
 
-
-
-
-
-
-
-
 ## Installation
 
-0. Anaconda python 3.6
+This pipeline is developed in python 2. Should only work in Linux system.
 
-1. GimmeMotifs
+
+#### 1. GimmeMotifs
 GimmeMotifs is a collection of motif discovery tools. The most straightforward way to install GimmeMotifs (https://github.com/simonvh/gimmemotifs ) is:
 
-`conda install -c bioconda gimmemotifs`
+`conda create -n motif_py2 python=2 gimmemotifs`
 
 
-Weeder (a motif discovery tool) is not included in GimmeMotifs by default.
-
-2. DME
+#### 2. DME
 
 `git clone https://github.com/smithlabcode/dme`
 
@@ -33,8 +25,10 @@ Weeder (a motif discovery tool) is not included in GimmeMotifs by default.
 
 `./dme2` (you should be able to see the help message)
 
+Next, add dme2 to your env var.
 
-3. DECOD
+
+#### 3. DECOD
 
 `wget http://www.sb.cs.cmu.edu/DECOD/download/DECOD-V1.01-20111024.zip`
 
@@ -46,72 +40,65 @@ Weeder (a motif discovery tool) is not included in GimmeMotifs by default.
 
 add to bashrc
 
-alias decod='java -jar /home/yli11/Programs/jar_tools/DECOD-20111024.jar -nogui'
+`alias decod='java -jar /PATH/TO/DECOD-20111024.jar -nogui'`
+
+#### 4. biopython sklearn joblib
+
+Sometimes installing a python package can upgrade your python 2 to python 3 automatically, be aware what is installed.
+
+`conda install -c anaconda biopython`
+
+`conda install -c anaconda scikit-learn`
+
+`conda install -c anaconda joblib`
+
+`conda install -c bioconda genomepy`
+
+`genomepy install hg19 UCSC --annotation`
+
+#### 5. install Emotif
+
+`git clone https://github.com/YichaoOU/Emotif_Alpha.git`
+
+`cd Emotif_Alpha`
+
+Note that you should be in the conda env where you have all the required library installed, e.g., motif_py2
+
+`python setup.py install`
 
 
+## Example Usage:
 
 
-
-## Usage:
-
-1. TO INSTALL Emotif
+1. Copy a sample configuration file
 
 ```
-sudo python setup.py install
+Emotif_alpha -copy
 ```
 
-2. TO OBTAIN A COPY OF SAMPLE CONFIGURATION FILE
+2. Run motif discovery ensemble
 
 ```
-Emotif_alpha -copy any_name.conf
+Emotif_alpha -f sample.md
 ```
 
-3. TO RUN THE TEST DATASET
-
-```
-Emotif_alpha -jid some_name -confFile any_name.conf
-```
+By default, the jobID (i.e., a folder that contains all motif discovery results) is `[Username]_Emotif_alpha_[Date]`
 
 
+## Other Dependencies
 
-## Dependencies
 
-(1)	GimmeMotifs
-GimmeMotifs is a collection of motif discovery tools. The most straightforward way to install GimmeMotifs (https://github.com/simonvh/gimmemotifs ) is:
-$ conda install gimmemotifs -c bioconda
-Of course, you first need to install conda.
-Weeder (a motif discovery tool) is not included in GimmeMotifs, you need to follow the instructions in the website.
+(1)	R ggplot2 (https://github.com/hadley/ggplot2 )
 
-(2)	DME (https://github.com/smithlabcode/dme )
-After installation, please put “dme2” in your $PATH.
-
-(3)	DECOD (http://www.sb.cs.cmu.edu/DECOD/ )
-The reference paper said it is fast, it is not! 
-
-(4)	Python scikit-learn (http://scikit-learn.org/stable/ )
-A popular machine learning library in python.
-
-(5)	R ggplot2 (https://github.com/hadley/ggplot2 )
-Please install the development version.
-# install.packages("devtools")
-devtools::install_github("hadley/ggplot2")
-
-(6)	MEME suite (http://meme-suite.org/doc/install.html?man_type=web )
+(2)	MEME suite (http://meme-suite.org/doc/install.html?man_type=web )
 You will use meme, meme2images, fimo, and mast.
-
-(7)	BioPython (http://biopython.org/DIST/docs/install/Installation.html
-
-
-Before installation, put the DECOD path in Emotif/motif_discovery.py near line 415
 
 
 ## FAQ:
 (1) wrong GimmeMotifs command?
-Depends on the GimmeMotifs version, the command in the motif_discovery.py might not be correct. It is in line 364. 
+Depends on the GimmeMotifs version, the command in the motif_discovery.py may not be correct.
 (2) can't find dme2 command?
 Please put the dme2 in your $PATH. 
-
-
 
 ## High-level Workflow
 

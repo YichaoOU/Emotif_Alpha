@@ -46,8 +46,9 @@ def callFimo(fastaFile, pwmFile, paraDict, outDir):
 	# split = Fimo_path.split('/')
 	# Fimo_path = '/'.join(split[:len(split)-1])
 	# Fimo_path = Fimo_path + '/fimo'
-	Fimo_path = '/home/liyc/working/bin/fimo'
-	command = (Fimo_path + ' ' + ' '.join(['--{} {}'.format(k,v) for k,v in paraDict.iteritems()]) + ' --oc ' + outDir + ' --verbosity 1  --no-qvalue --text '
+	# Fimo_path = '/home/liyc/working/bin/fimo'
+	Fimo_path = 'fimo'
+	command = (Fimo_path + ' ' + ' '.join(['--{} {}'.format(k,v) for k,v in paraDict.iteritems()]) + ' --oc ' + outDir + ' --verbosity 0  --no-qvalue --text '
 		' ' + pwmFile + ' ' + fastaFile  )
 	print '\n\nFIMO command:', command
 	print '\nFIMO out folder:',outDir,'\n'

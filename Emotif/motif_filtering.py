@@ -12,8 +12,8 @@ import numpy as np
 from scipy.io.arff import loadarff as la
 from sklearn import svm
 from sklearn import datasets
-from sklearn.cross_validation import StratifiedKFold
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import classification_report
 from sklearn.metrics import precision_score
 from sklearn.metrics import accuracy_score

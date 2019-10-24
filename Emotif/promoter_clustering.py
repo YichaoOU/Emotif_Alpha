@@ -22,7 +22,7 @@ def jacards_HC(jid,confDict,csv):
 	fileList = [] 
 	# run R script to do clustering
 	dir = os.path.dirname(os.path.realpath(__file__))
-	R_script_dir = dir + "/jacard_HC_ward.py "
+	R_script_dir = dir + "/jacard_HC_ward.R "
 	HC_figure = jid + "_hc_ward.png"
 	HC_clusters = jid + "_clusters.txt"
 	R_command = R_script_dir + csv + " " + jid + " > " + HC_clusters
