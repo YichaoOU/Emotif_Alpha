@@ -396,7 +396,7 @@ def run_gimme(jid, confDict):
 		print 'gimmemotifs execution failed. Exiting'
 		exit()
 	
-	gimmeAllMotifPfm = output_folder + '/intermediate_results/' + jid + '_gimme_motifs_all_motifs.pfm'
+	gimmeAllMotifPfm = output_folder + '/intermediate_results/all_motifs.pfm'
 	pwmFileName = output_folder + '/' + jid + '_all_gimme_motifs.pwm'
 	convertFileToPwm(gimmeAllMotifPfm, pwmFileName)
 	return output_folder,pwmFileName

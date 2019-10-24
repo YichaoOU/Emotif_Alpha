@@ -27,22 +27,10 @@ GimmeMotifs is a collection of motif discovery tools. The most straightforward w
 
 Next, add dme2 to your env var.
 
+`export PATH=$PATH:/PATH_TO_DME2/`
 
-#### 3. DECOD
 
-`wget http://www.sb.cs.cmu.edu/DECOD/download/DECOD-V1.01-20111024.zip`
-
-`unzip DECOD-V1.01-20111024.zip`
-
-`module load java`
-
-`java -jar DECOD-20111024.jar -nogui`
-
-add to bashrc
-
-`alias decod='java -jar /PATH/TO/DECOD-20111024.jar -nogui'`
-
-#### 4. biopython sklearn joblib
+#### 3. biopython sklearn joblib
 
 Sometimes installing a python package can upgrade your python 2 to python 3 automatically, be aware what is installed.
 
@@ -56,7 +44,7 @@ Sometimes installing a python package can upgrade your python 2 to python 3 auto
 
 `genomepy install hg19 UCSC --annotation`
 
-#### 5. install Emotif
+#### 4. install Emotif
 
 `git clone https://github.com/YichaoOU/Emotif_Alpha.git`
 
@@ -93,6 +81,7 @@ By default, the jobID (i.e., a folder that contains all motif discovery results)
 (2)	MEME suite (http://meme-suite.org/doc/install.html?man_type=web )
 You will use meme, meme2images, fimo, and mast.
 
+(3) JAVA, to run DECOD
 
 ## FAQ:
 (1) wrong GimmeMotifs command?

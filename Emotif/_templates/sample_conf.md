@@ -65,7 +65,7 @@ receptive_field_size = 20
 
 [gimme]
 motif_size = small
-fraction = 0.95
+fraction = 0.5
 tools = MEME,Weeder,BioProspector,AMD,Homer,GADEM,MDmodule,Improbizer
 
 [DECOD]
